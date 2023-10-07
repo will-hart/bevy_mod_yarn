@@ -1,0 +1,66 @@
+title: Start
+---
+// here is an example of a pre-registered command
+<<echo separate strings "merged strings" separate again>>
+
+// This command doesn't exist. Its fine, but you can see in the example a way to handle unexpected commands
+<<a_command_that_doesnt_exist with some args>>
+
+Welcome to my story! Press space to advance the dialogue.
+
+<<set_background one>>
+Did you notice the background changed a bit? That was from a custom command. Press space to keep going.
+
+<<jump second>>
+===
+title: second
+---
+<<declare $my_var = false>>
+<<set $my_var to false>>
+<<set_background two>>
+
+Oh! It changed again. How... exciting. Keep pressing space I guess.
+
+Using Yarn you can sometimes select a response from a list of options.
+In this demo, when you see some options, they'll have a number next to them.
+Press that number to select the dialogue option.
+
+So, do you want to pick option one or option three (press space)?
+-> Option 1
+    You chose option one!
+    CharacterA: Hi
+    <<set $my_var to true>>
+    
+    Are you ready for some nested options?
+    -> Yes
+        <<jump option1>>
+    -> No
+        <<jump second>>
+-> Option 2 <<if $my_var == true>>
+    You chose option two... wait what this shouldn't be possible.
+    <<jump option2>>
+-> Option 3
+    You chose option three but pressed two, how weird. 
+    Check out the kitchen_sink.yarn file to see if you can work out why.
+    <<jump option3>>
+===
+title: option1
+---
+This is option 1
+<<jump end>>
+===
+title: option2
+---
+This is option 2
+<<jump end>>
+===
+title: option3
+---
+This is option 3
+<<jump end>>
+===
+title: end
+---
+Did you know the value of $my_var was {$my_var}?
+-THE END-
+===

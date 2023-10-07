@@ -266,8 +266,12 @@ impl YarnPluginBuilder {
 
     /// Adds a command to the command handlers, keeping the existing commands in place.
     /// Returns the builder
-    pub fn with_yarn_command(mut self, command_name: String, command: CommandHandlerFn) -> Self {
-        self.commands.push((command_name, command));
+    pub fn with_yarn_command<N: Into<String>>(
+        mut self,
+        command_name: N,
+        command: CommandHandlerFn,
+    ) -> Self {
+        self.commands.push((command_name.into(), command));
         self
     }
 

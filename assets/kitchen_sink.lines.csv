@@ -1,0 +1,24 @@
+id,text,file,node,lineNumber
+line:4a18032a,Welcome to my story! Press space to advance the dialogue.,G:\code\bevy_mod_yarn\assets\kitchen_sink.yarn,Start,9
+line:dc28045d,Did you notice the background changed a bit? That was from a custom command. Press space to keep going.,G:\code\bevy_mod_yarn\assets\kitchen_sink.yarn,Start,12
+line:ed9f149c,Oh! It changed again. How... exciting. Keep pressing space I guess.,G:\code\bevy_mod_yarn\assets\kitchen_sink.yarn,second,22
+line:7baf13eb,Using Yarn you can sometimes select a response from a list of options.,G:\code\bevy_mod_yarn\assets\kitchen_sink.yarn,second,24
+line:d83a7775,"In this demo, when you see some options, they'll have a number next to them.",G:\code\bevy_mod_yarn\assets\kitchen_sink.yarn,second,25
+line:4e0a7002,Press that number to select the dialogue option.,G:\code\bevy_mod_yarn\assets\kitchen_sink.yarn,second,26
+line:f45b799b,"So, do you want to pick option one or option three (press space)?",G:\code\bevy_mod_yarn\assets\kitchen_sink.yarn,second,28
+line:626b7eec,Option 1,G:\code\bevy_mod_yarn\assets\kitchen_sink.yarn,second,29
+line:f376c17c,You chose option one!,G:\code\bevy_mod_yarn\assets\kitchen_sink.yarn,second,30
+line:6546c60b,CharacterA: Hi,G:\code\bevy_mod_yarn\assets\kitchen_sink.yarn,second,31
+line:b806d101,Are you ready for some nested options?,G:\code\bevy_mod_yarn\assets\kitchen_sink.yarn,second,34
+line:2e36d676,Yes,G:\code\bevy_mod_yarn\assets\kitchen_sink.yarn,second,35
+line:9467dfef,No,G:\code\bevy_mod_yarn\assets\kitchen_sink.yarn,second,37
+line:0257d898,Option 2,G:\code\bevy_mod_yarn\assets\kitchen_sink.yarn,second,39
+line:a1c2bc06,You chose option two... wait what this shouldn't be possible.,G:\code\bevy_mod_yarn\assets\kitchen_sink.yarn,second,40
+line:37f2bb71,Option 3,G:\code\bevy_mod_yarn\assets\kitchen_sink.yarn,second,42
+line:8da3b2e8,"You chose option three but pressed two, how weird.",G:\code\bevy_mod_yarn\assets\kitchen_sink.yarn,second,43
+line:1b93b59f,Check out the kitchen_sink.yarn file to see if you can work out why.,G:\code\bevy_mod_yarn\assets\kitchen_sink.yarn,second,44
+line:498af27e,This is option 1,G:\code\bevy_mod_yarn\assets\kitchen_sink.yarn,option1,49
+line:8604b30b,This is option 2,G:\code\bevy_mod_yarn\assets\kitchen_sink.yarn,option2,54
+line:d6858058,This is option 3,G:\code\bevy_mod_yarn\assets\kitchen_sink.yarn,option3,59
+line:c16c9882,Did you know the value of $my_var was {0}?,G:\code\bevy_mod_yarn\assets\kitchen_sink.yarn,end,64
+line:7b3d911b,-THE END-,G:\code\bevy_mod_yarn\assets\kitchen_sink.yarn,end,65
