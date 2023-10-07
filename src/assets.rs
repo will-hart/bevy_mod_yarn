@@ -102,7 +102,7 @@ impl BevyYarnStringTable {
     }
 
     /// Completes variable substitutions in the given string
-    fn perform_variable_substitutions(initial: String, substitutions: &Vec<String>) -> String {
+    fn perform_variable_substitutions(initial: String, substitutions: &[String]) -> String {
         substitutions
             .iter()
             .enumerate()
@@ -122,7 +122,7 @@ impl BevyYarnStringTable {
                     (
                         captures
                             .get(1)
-                            .map(|val| val.as_str().to_owned().replace(":", "")),
+                            .map(|val| val.as_str().to_owned().replace(':', "")),
                         captures.get(2).unwrap().as_str().to_owned(),
                     )
                 } else {
@@ -182,7 +182,7 @@ impl BevyYarnMetadataTable {
             .get(&line.id)
             .map(|metadata_info| &metadata_info.tags)
             .cloned()
-            .unwrap_or_else(|| Vec::new())
+            .unwrap_or_default()
     }
 }
 
@@ -203,11 +203,8 @@ impl AssetLoader for BevyYarnMetadataTableAssetLoader {
                     .from_reader(bytes)
                     .deserialize()
                     .map(|result| {
-                        match &result {
-                            Err(_) => {
-                                warn!("[{:?}] {result:?}\n", load_context.path());
-                            }
-                            _ => {}
+                        if result.is_err() {
+                            warn!("[{:?}] {result:?}\n", load_context.path());
                         }
 
                         let res: MetadataInfo = result.unwrap();

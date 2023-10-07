@@ -68,9 +68,7 @@ impl Plugin for YarnPlugin {
             .init_asset_loader::<BevyYarnMetadataTableAssetLoader>()
             .add_event::<BevyYarnEvent>()
             .add_event::<BevyYarnStepDialogueEvent>()
-            .insert_resource(CommandHandlers(HashMap::from_iter(
-                self.commands.clone().into_iter(),
-            )))
+            .insert_resource(CommandHandlers(HashMap::from_iter(self.commands.clone())))
             .add_systems(PreUpdate, (Self::load_yarn_data,))
             .add_systems(Update, (Self::process_yarn_events,));
     }
@@ -207,8 +205,7 @@ impl YarnPlugin {
                                     };
 
                                     // see if we have a handler registered
-                                    if let Some(_) =
-                                        command_handlers.0.get(&bevy_command.command_name)
+                                    if command_handlers.0.get(&bevy_command.command_name).is_some()
                                     {
                                         info!(
                                             "Calling registered command {} with args {:?}",
