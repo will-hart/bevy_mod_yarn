@@ -12,3 +12,6 @@ Cargo.lock
 
 # MSVC Windows builds of rustc generate these, which store debugging information
 *.pdb
+
+# The Yarn Spinner Console, available from https://github.com/YarnSpinnerTool/YarnSpinner-Console
+ysc.exe

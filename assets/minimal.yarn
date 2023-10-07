@@ -1,0 +1,9 @@
+title: Start
+---
+Welcome to my simple story!
+<<jump second>>
+===
+title: second
+---
+-THE END-
+===
