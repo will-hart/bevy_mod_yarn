@@ -1,15 +1,13 @@
 # bevy_mod_yarn
 
 This is a bevy library for Yarn Spinner, based on the
-[`yarnham`](https://github.com/mystal/yharnam) parser. Currently this requires
-my fork of yharnam found here on the [`main
-branch`](https://github.com/will-hart/yharnam). This branch adds support for
-v2.3+ of yarn spinner and implements a bunch of missing functionality.
+[`chapter`](https://github.com/will-hart/chapter) parser (a fork of the
+`yharnam` crate).
 
 ## Usage
 
-See the examples directory for usage (minimal and "kitchen sink" examples are
-available).
+See the examples directory for usage (both minimal and "kitchen sink" examples
+are available).
 
 Note that **Yharnam only handles compiled yarn files**. Yarn files can be
 compiled using the [Yarn Spinner
