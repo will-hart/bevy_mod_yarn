@@ -47,6 +47,9 @@ pub struct BevyYarnDialogueEngine {
     /// The name of the file this engine was loaded from
     pub engine_name: String,
 
+    /// The number of choices currently available to the user to select from
+    pub num_choices: usize,
+
     string_table: Handle<BevyYarnStringTable>,
     metadata_table: Handle<BevyYarnMetadataTable>,
     _program: Handle<BevyYarnProgram>,
@@ -71,6 +74,9 @@ impl Plugin for YarnPlugin {
             .insert_resource(CommandHandlers(HashMap::from_iter(self.commands.clone())))
             .add_systems(PreUpdate, (Self::load_yarn_data,))
             .add_systems(Update, (Self::process_yarn_events,));
+
+        #[cfg(feature = "input-handlers")]
+        app.add_systems(Update, (Self::handle_input,));
     }
 }
 
@@ -105,6 +111,7 @@ impl YarnPlugin {
                         _program: program_handle,
                         string_table,
                         metadata_table,
+                        num_choices: 0,
                     })
                     .remove::<YarnData>();
 
@@ -138,6 +145,8 @@ impl YarnPlugin {
                             match result {
                                 SuspendReason::Nop => {}
                                 SuspendReason::Line(line) => {
+                                    yarn_engine.num_choices = 0;
+
                                     let (character, formatted_text) =
                                         string_table.get_final_text(&line, LOCALE);
 
@@ -150,33 +159,33 @@ impl YarnPlugin {
                                     break;
                                 }
                                 SuspendReason::Options(options) => {
-                                    send_yarn_events.send(BevyYarnEvent::Choices(
-                                        options
-                                            .iter()
-                                            .map(|choice| {
-                                                let (character, formatted_text) = string_table
-                                                    .get_final_text(&choice.line, LOCALE);
+                                    let choices = options
+                                        .iter()
+                                        .map(|choice| {
+                                            let (character, formatted_text) =
+                                                string_table.get_final_text(&choice.line, LOCALE);
 
-                                                BevyYarnChoice {
-                                                    line_id: choice.line.id.clone(),
-                                                    formatted_line: BevyYarnLine {
-                                                        formatted_text,
-                                                        character,
-                                                        tags: metadata_table
-                                                            .get_tags_for_line(&choice.line),
-                                                        line: choice.line.clone(),
-                                                    },
-                                                    destination_node: choice
-                                                        .destination_node
-                                                        .clone(),
-                                                }
-                                            })
-                                            .collect(),
-                                    ));
+                                            BevyYarnChoice {
+                                                line_id: choice.line.id.clone(),
+                                                formatted_line: BevyYarnLine {
+                                                    formatted_text,
+                                                    character,
+                                                    tags: metadata_table
+                                                        .get_tags_for_line(&choice.line),
+                                                    line: choice.line.clone(),
+                                                },
+                                                destination_node: choice.destination_node.clone(),
+                                            }
+                                        })
+                                        .collect::<Vec<_>>();
+                                    yarn_engine.num_choices = choices.len();
+
+                                    send_yarn_events.send(BevyYarnEvent::Choices(choices));
                                     break;
                                 }
                                 SuspendReason::Command(cmd_text) => {
                                     debug!("Received command {cmd_text}");
+                                    yarn_engine.num_choices = 0;
 
                                     let command_parser =
                                         Regex::new(r#"(("[^"]+")|\S+)+"#).expect("parse regex");
@@ -225,10 +234,14 @@ impl YarnPlugin {
                                 }
                                 SuspendReason::NodeChange { start, end } => {
                                     debug!("Move from node {start} to node {end}");
+                                    yarn_engine.num_choices = 0;
+
                                     // do not break here as we want to trigger the first line of the next node
                                 }
                                 SuspendReason::DialogueComplete(last_node) => {
                                     debug!("End dialogue on {last_node}");
+                                    yarn_engine.num_choices = 0;
+
                                     send_yarn_events.send(BevyYarnEvent::EndConversation);
                                     break;
                                 }
@@ -242,6 +255,42 @@ impl YarnPlugin {
                         }
                     }
                 }
+            }
+        }
+    }
+
+    #[cfg(feature = "input-handlers")]
+    fn handle_input(
+        keys: Res<Input<KeyCode>>,
+        mut event_sender: EventWriter<BevyYarnStepDialogueEvent>,
+        mut engines: Query<&mut BevyYarnDialogueEngine>,
+    ) {
+        for mut engine in engines.iter_mut() {
+            if engine.num_choices > 0 {
+                if keys.just_pressed(KeyCode::Key1) || keys.just_pressed(KeyCode::Numpad1) {
+                    info!("Sending step event (option 1 pressed)");
+                    let _ = engine.vm.set_selected_option(0);
+                    event_sender.send(BevyYarnStepDialogueEvent);
+                }
+
+                if engine.num_choices > 1 && keys.just_pressed(KeyCode::Key2)
+                    || keys.just_pressed(KeyCode::Numpad2)
+                {
+                    info!("Sending step event (option 2 pressed)");
+                    let _ = engine.vm.set_selected_option(1);
+                    event_sender.send(BevyYarnStepDialogueEvent);
+                }
+
+                if engine.num_choices > 2 && keys.just_pressed(KeyCode::Key3)
+                    || keys.just_pressed(KeyCode::Numpad3)
+                {
+                    info!("Sending step event (option 3 pressed)");
+                    let _ = engine.vm.set_selected_option(2);
+                    event_sender.send(BevyYarnStepDialogueEvent);
+                }
+            } else if keys.just_pressed(KeyCode::Space) {
+                info!("Sending step event (space pressed)");
+                event_sender.send(BevyYarnStepDialogueEvent);
             }
         }
     }

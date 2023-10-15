@@ -7,18 +7,9 @@
 use bevy::prelude::*;
 use bevy_mod_yarn::{
     commands::AddBevyCommandHandlerExt,
-    prelude::{BevyYarnEvent, BevyYarnStepDialogueEvent, YarnData},
-    BevyYarnDialogueEngine, YarnPluginBuilder,
+    prelude::{BevyYarnEvent, YarnData},
+    YarnPluginBuilder,
 };
-
-/// We use this resource to track dialogue state. This allows us to ignore invalid
-/// options from keyboard input.
-#[derive(Default, Resource)]
-struct DialogueState {
-    // The current number of choices - setting to 0 means there are no valid choices
-    // and choice selection keys will be ignored in the `handle_input` system
-    num_choices: usize,
-}
 
 fn main() {
     App::new()
@@ -33,10 +24,9 @@ fn main() {
                 .build(),
         ))
         .insert_resource(ClearColor(Color::BLACK))
-        .insert_resource(DialogueState::default())
         // This is another way to register commands. This is also available on World.
         .add_yarn_command("echo", echo_handler)
-        .add_systems(Update, (handle_yarn_steps, handle_input))
+        .add_systems(Update, (handle_yarn_steps,))
         .add_systems(Startup, setup)
         .run();
 }
@@ -62,52 +52,9 @@ fn setup(mut commands: Commands) {
     ),));
 }
 
-/// This system just takes user input and controls the dialogue engine using
-/// that input. This doesn't do any checks (i.e. you can send options when there)
-/// aren't any options to send, etc.
-fn handle_input(
-    keys: Res<Input<KeyCode>>,
-    state: Res<DialogueState>,
-    mut event_sender: EventWriter<BevyYarnStepDialogueEvent>,
-    mut engines: Query<&mut BevyYarnDialogueEngine>,
-) {
-    for mut engine in engines.iter_mut() {
-        if state.num_choices > 0 {
-            if keys.just_pressed(KeyCode::Key1) || keys.just_pressed(KeyCode::Numpad1) {
-                info!("Sending step event (option 1 pressed)");
-                let _ = engine.vm.set_selected_option(0);
-                event_sender.send(BevyYarnStepDialogueEvent);
-            }
-
-            if state.num_choices > 1
-                && (keys.just_pressed(KeyCode::Key2) || keys.just_pressed(KeyCode::Numpad2))
-            {
-                info!("Sending step event (option 2 pressed)");
-                let _ = engine.vm.set_selected_option(1);
-                event_sender.send(BevyYarnStepDialogueEvent);
-            }
-
-            if state.num_choices > 2
-                && (keys.just_pressed(KeyCode::Key3) || keys.just_pressed(KeyCode::Numpad3))
-            {
-                info!("Sending step event (option 3 pressed)");
-                let _ = engine.vm.set_selected_option(2);
-                event_sender.send(BevyYarnStepDialogueEvent);
-            }
-        } else if keys.just_pressed(KeyCode::Space) {
-            info!("Sending step event (space pressed)");
-            event_sender.send(BevyYarnStepDialogueEvent);
-        }
-    }
-}
-
 /// This function listens for BevyYarnEvents, which are sent by the Yarn Engine when
 /// something new occurs within the dialogue. Here we can display the scene to the user.
-fn handle_yarn_steps(
-    mut state: ResMut<DialogueState>,
-    mut events: EventReader<BevyYarnEvent>,
-    mut texts: Query<&mut Text>,
-) {
+fn handle_yarn_steps(mut events: EventReader<BevyYarnEvent>, mut texts: Query<&mut Text>) {
     for event in events.iter() {
         match event {
             BevyYarnEvent::Say(line) => {
@@ -115,8 +62,6 @@ fn handle_yarn_steps(
                     "Received a line from the yarn spinner engine, '{}'",
                     line.formatted_text
                 );
-
-                state.num_choices = 0;
 
                 let mut text = texts.single_mut();
                 text.sections.push(TextSection {
@@ -139,8 +84,6 @@ fn handle_yarn_steps(
             BevyYarnEvent::Choices(ref choices) => {
                 let mut text = texts.single_mut();
 
-                state.num_choices = choices.len();
-
                 let section = TextSection {
                     value: choices
                         .iter()
@@ -158,8 +101,6 @@ fn handle_yarn_steps(
                 text.sections.push(section);
             }
             BevyYarnEvent::Command(cmd) => {
-                state.num_choices = 0;
-
                 // If bevy_mod_yarn handles the command using one of your pre-registered command handlers,
                 // it will set `handled` to true. Otherwise its up to you to do something about these unhandled commands.
                 if !cmd.handled {
@@ -167,8 +108,6 @@ fn handle_yarn_steps(
                 }
             }
             BevyYarnEvent::EndConversation => {
-                state.num_choices = 0;
-
                 info!("Reached end of conversation, stopping");
             }
         }

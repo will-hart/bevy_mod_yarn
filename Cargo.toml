@@ -11,3 +11,9 @@ csv = "1"
 prost = "0.12"
 regex = "1.9.6"
 yharnam = { git = "https://github.com/will-hart/yharnam", branch = "tweaks" }
+
+[features]
+default = ["input-handlers"]
+
+# Adds default input handlers
+input-handlers = []
