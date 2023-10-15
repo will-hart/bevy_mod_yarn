@@ -10,7 +10,8 @@ bevy = "0.11"
 csv = "1"
 prost = "0.12"
 regex = "1.9.6"
-yharnam = { git = "https://github.com/will-hart/yharnam", branch = "main" }
+
+chapter = "0.1.0"
 
 [features]
 default = ["input-handlers"]

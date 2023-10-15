@@ -8,10 +8,10 @@ use bevy::{
     prelude::{warn, Handle},
     reflect::{TypePath, TypeUuid},
 };
+use chapter::{expand_format_functions, Line, LineInfo, MetadataInfo, Program};
 use csv::{Reader, ReaderBuilder};
 use prost::Message;
 use regex::Regex;
-use yharnam::{expand_format_functions, Line, LineInfo, MetadataInfo, Program};
 
 /// A newtype wrapping a yarn spinner program that can be loaded
 /// into the bevy engine.

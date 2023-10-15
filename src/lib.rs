@@ -13,13 +13,13 @@ use assets::{
     BevyYarnProjectAssetLoader, BevyYarnStringTable, BevyYarnStringTableAssetLoader,
 };
 use bevy::prelude::*;
+use chapter::*;
 use commands::{BevyYarnCommand, CommandHandlers};
 use data::YarnData;
 use prelude::{
     BevyYarnChoice, BevyYarnEvent, BevyYarnLine, BevyYarnStepDialogueEvent, CommandHandlerFn,
 };
 use regex::Regex;
-use yharnam::*;
 
 use crate::assets::get_table_pathbuf_from_yarnc_path;
 

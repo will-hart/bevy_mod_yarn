@@ -1,7 +1,7 @@
 //! A component representing a new yarn data file to load into the engine
 
 use bevy::prelude::Component;
-use yharnam::Line;
+use chapter::Line;
 
 /// A component that is added to trigger loading a yarn engine.  The entity that this component
 /// is added has the yharnam "Virtual Machine" added to it and this component is removed.
