@@ -18,3 +18,12 @@ The build script (`build.rs`) in this repository shows an example of how you can
 automatically compile your yarn files during the build. Note that due to
 limitations in bevy's asset loader the csv files created by the yarn compiler
 need to be renamed.
+
+## Features
+
+The current feature(s) are available, enabled by default:
+
+- `input-handlers`, which includes default input handlers (space to progress
+  through dialogues and numbers 1-3 for selecting options). There are checks to
+  ensure a valid option is pressed. To disable this and provider your own input
+  handlers, set `default-features = false`.
