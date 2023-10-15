@@ -50,6 +50,9 @@ pub struct BevyYarnDialogueEngine {
     /// The number of choices currently available to the user to select from
     pub num_choices: usize,
 
+    /// A flag that is set to true to indicate that the dialogue is complete
+    pub is_complete: bool,
+
     string_table: Handle<BevyYarnStringTable>,
     metadata_table: Handle<BevyYarnMetadataTable>,
     _program: Handle<BevyYarnProgram>,
@@ -112,6 +115,7 @@ impl YarnPlugin {
                         string_table,
                         metadata_table,
                         num_choices: 0,
+                        is_complete: false,
                     })
                     .remove::<YarnData>();
 
@@ -241,6 +245,7 @@ impl YarnPlugin {
                                 SuspendReason::DialogueComplete(last_node) => {
                                     debug!("End dialogue on {last_node}");
                                     yarn_engine.num_choices = 0;
+                                    yarn_engine.is_complete = true;
 
                                     send_yarn_events.send(BevyYarnEvent::EndConversation);
                                     break;
